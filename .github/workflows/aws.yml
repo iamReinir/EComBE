@@ -69,6 +69,11 @@ jobs:
       uses: webfactory/ssh-agent@v0.6.0
       with:
           ssh-private-key: ${{ secrets.AWS_KEY }}
+
+    - name: Add SSH Known Host
+      run: |
+          mkdir -p ~/.ssh
+          ssh-keyscan -H ${{ secrets.VM }} >> ~/.ssh/known_hosts
       
     - name: Deploy to Remote Server
       run: |
