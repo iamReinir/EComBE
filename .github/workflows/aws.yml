@@ -75,11 +75,9 @@ jobs:
           mkdir -p ~/.ssh
           ssh-keyscan -H ${{ secrets.VM }} >> ~/.ssh/known_hosts
 
-    - name: Debug SSH Connection
+    - name: Configure SSH key file
       run: |
-          ssh -vT ubuntu@${{ secrets.VM }}
-      env:
-          SSH_AUTH_SOCK: /tmp/ssh_agent.sock
+          echo ${{ secrets.AWS_KEY }} >> ~/.ssh/id_rsa
       
     - name: Deploy to Remote Server
       run: |
