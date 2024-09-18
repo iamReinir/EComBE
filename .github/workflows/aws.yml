@@ -98,9 +98,9 @@ jobs:
     - name: Restart Daemon
       run: |
           ssh aws << 'EOF'
-            sudo daemon --name=ecom --stop
+            daemon --name=ecom --stop
             echo "daemon stopped"
-            sudo daemon --name=ecom -o log.txt --respawn dotnet /home/ubuntu/ECom/ECom.dll
+            daemon --name=ecom -o /home/ubuntu/log.txt --respawn dotnet /home/ubuntu/ECom/ECom.dll
             echo "daemon restarted" 
           EOF
       env:
