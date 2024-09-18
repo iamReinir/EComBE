@@ -77,7 +77,8 @@ jobs:
 
     - name: Configure SSH key file
       run: |
-          echo ${{ secrets.AWS_KEY }} >> ~/.ssh/id_rsa
+          echo "${{ secrets.AWS_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
       
     - name: Deploy to Remote Server
       run: |
