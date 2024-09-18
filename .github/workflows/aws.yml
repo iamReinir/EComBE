@@ -79,16 +79,25 @@ jobs:
       run: |
           echo "${{ secrets.AWS_KEY }}" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
-      
+
+    - name: Configure SSH Profile
+      run: |
+          echo "Host aws" >> ~/.ssh/config
+          echo "    HostName ${{ secrets.VM }}" >> ~/.ssh/config
+          echo "    User ubuntu" >> ~/.ssh/config
+          echo "    IdentityFile ~/.ssh/id_rsa" >> ~/.ssh/config
+          echo "    PubKeyAuthentication yes" >> ~/.ssh/config
+          echo "    StrictHostKeyChecking no" >> ~/.ssh/config
+          
     - name: Deploy to Remote Server
       run: |
-          rsync -avz ./publish/ Ubuntu@${{ secrets.VM }}:/ECom
+          rsync -avz ./publish/ aws:/ECom
       env:
           SSH_AUTH_SOCK: /tmp/ssh_agent.sock
      
     - name: Restart Daemon
       run: |
-          ssh Ubuntu@${{ secrets.VM }} << 'EOF'
+          ssh aws << 'EOF'
             sudo daemon --name=ecom --stop
             sudo daemon --name=ecom -o log.txt -r dotnet /home/ubuntu/Ecom/publish/Ecom.dll
           EOF
