@@ -99,7 +99,7 @@ jobs:
       run: |
           ssh aws << 'EOF'
             sudo daemon --name=ecom --stop
-            sudo daemon --name=ecom -o log.txt --respawn dotnet /home/ubuntu/Ecom/Ecom.dll
+            sudo daemon --name=ecom -o log.txt --respawn dotnet /home/ubuntu/ECom/ECom.dll
           EOF
       env:
           SSH_AUTH_SOCK: /tmp/ssh_agent.sock
