@@ -74,6 +74,12 @@ jobs:
       run: |
           mkdir -p ~/.ssh
           ssh-keyscan -H ${{ secrets.VM }} >> ~/.ssh/known_hosts
+
+    - name: Debug SSH Connection
+      run: |
+          ssh -vT ubuntu@${{ secrets.VM }}
+      env:
+          SSH_AUTH_SOCK: /tmp/ssh_agent.sock
       
     - name: Deploy to Remote Server
       run: |
