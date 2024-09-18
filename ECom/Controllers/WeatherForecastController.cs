@@ -25,7 +25,7 @@ namespace ECom.Controllers
             {
                 Date = DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
                 TemperatureC = Random.Shared.Next(-20, 55),
-                Summary = "GOOF"//Summaries[Random.Shared.Next(Summaries.Length)]
+                Summary = "PIPELINE SUCCESS"//Summaries[Random.Shared.Next(Summaries.Length)]
             })
             .ToArray();
         }
