@@ -99,7 +99,7 @@ jobs:
       run: |
           ssh aws << 'EOF'            
             chmod +x /home/ubuntu/ECom/start.sh
-            sudo /bin/bash -c 'start.sh'
+            sudo /bin/bash -c '/home/ubuntu/ECom/start.sh'
             echo "daemon restarted" 
           EOF
       env:

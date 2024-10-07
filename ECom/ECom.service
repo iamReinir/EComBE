@@ -7,7 +7,7 @@ Type=idle
 User=root
 Restart=on-failure
 WorkingDirectory=/home/ECom
-ExecStart=/bin/dotnet ECom.dll
+ExecStart=/bin/dotnet /home/ubuntu/ECom/ECom.dll
 
 [Install]
 WantedBy=multi-user.target
