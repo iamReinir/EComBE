@@ -98,7 +98,8 @@ jobs:
     - name: Restart Daemon
       run: |
           ssh aws << 'EOF'            
-            daemon --name=ecom --restart
+            chmod +x /home/ubuntu/ECom/start.sh
+            sudo /bin/bash -c 'start.sh'
             echo "daemon restarted" 
           EOF
       env:

@@ -1,0 +1,13 @@
+[Unit]
+Description=ECom backend
+After=network.target
+
+[Service]
+Type=idle
+User=root
+Restart=on-failure
+WorkingDirectory=/home/ECom
+ExecStart=/bin/dotnet ECom.dll
+
+[Install]
+WantedBy=multi-user.target
