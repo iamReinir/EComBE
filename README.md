@@ -2,10 +2,15 @@
 
 # Frontend : [EComFE](https://github.com/Kiennt1699/EComFE_remake)
 
-![Business Function](./img/businessFunction.png)
-
 Link design: [DESIGN ECOM](https://www.canva.com/design/DAGRitflw30/jgZpfaew30bXz1_ny6CEqQ/edit?utm_content=DAGRitflw30&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton)
 
+# Link backend : reinir.mooo.com:5001 / 3.27.151.161:5001
+
+## Ai cần connect tới database / server die thì chat riêng với Trung
+
+## Làm ơn không push login/password của db lên github
+
+![Business Function](./img/businessFunction.png)
 
 # Work Breakdown Structure (WBS)
 
