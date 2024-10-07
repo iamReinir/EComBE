@@ -6,7 +6,7 @@ After=network.target
 Type=idle
 User=root
 Restart=on-failure
-WorkingDirectory=/home/ECom
+WorkingDirectory=/home/ubuntu/ECom
 ExecStart=/bin/dotnet /home/ubuntu/ECom/ECom.dll
 
 [Install]
