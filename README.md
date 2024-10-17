@@ -4,7 +4,20 @@
 
 Link design: [DESIGN ECOM](https://www.canva.com/design/DAGRitflw30/jgZpfaew30bXz1_ny6CEqQ/edit?utm_content=DAGRitflw30&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton)
 
-# Link backend : reinir.mooo.com:5001 / 3.27.151.161:5001
+## Link backend : reinir.mooo.com:5001 / 3.27.151.161:5001
+
+## File server
+
+### Để lưu : reinir.mooo.com:8888
+
+gửi POST tới đó với enctype=multipart/form-data là nó trả về cái filename
+
+> curl -X POST -F "file=@./test.jpg" http://reinir.mooo.com:8888
+> nó trả về : {"filename": "uploaded_image_1729160653.jpg"}
+
+### Để lấy : GET reinir.mooo.com:5002/{filename}
+
+>  http://reinir.mooo.com:5002/uploaded_image_1729160653.jpg
 
 ## Ai cần connect tới database / server die thì chat riêng với Trung
 
