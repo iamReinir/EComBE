@@ -2,17 +2,24 @@ import pandas as pd
 import os
 import sys
 import json
+import re
+import io
+
+# Function to remove invalid characters, including surrogates
+def remove_invalid_chars(s):
+    return re.sub(r'[\ud800-\udfff]', '', s)
 
 class ExcelManager:
     def __init__(self, filename):
         self.filename = filename
          # Create a new DataFrame
         self.df = pd.DataFrame()
-
-        # Always overwrite the existing file
-        self.df.to_excel(filename, index=False)  # Create or overwrite the Excel file
+        
+        # overwrite
+        self.df.to_excel(self.filename, index=False)
 
     def save(self):
+        self.df = self.df.applymap(lambda x: remove_invalid_chars(x) if isinstance(x, str) else x)
         self.df.to_excel(self.filename, index=False)
         print(f"Data saved to {self.filename}")
 
@@ -74,7 +81,7 @@ def get_LOC(element):
 # Example usage
 if __name__ == "__main__":
     excel_manager = ExcelManager("data.xlsx")
-
+    sys.stdin = io.TextIOWrapper(sys.stdin.buffer, encoding='utf-8')
     input_data = sys.stdin.read().strip()
     # print(f"INPUT\n{input_data}")
 

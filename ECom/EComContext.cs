@@ -16,6 +16,7 @@ namespace ECom
         public DbSet<OrderItem> OrderItems { get; set; }
         public DbSet<Product> Products { get; set; }
         public DbSet<User> AppUsers { get; set; }
+        public DbSet<WishlistItem> WishLists { get; set; }
 
         // Todo: integrate AppUser with Identity's User
     }
