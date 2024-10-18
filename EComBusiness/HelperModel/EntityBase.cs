@@ -9,16 +9,21 @@
 
     public static class EntityExtension
     {
-        public static EntityBase UpdateAudit(this EntityBase entity)
+        public static TResult UpdateAudit<TResult>(this TResult entity) where TResult : EntityBase
         {
             entity.UpdatedAt = DateTime.Now;
             return entity;
         }
 
-        public static EntityBase SoftDelete(this EntityBase entity)
+        public static TResult SoftDelete<TResult>(this TResult entity) where TResult : EntityBase
         {
             entity.IsDeleted = true;
             return entity;
+        }
+
+        public static IQueryable<TResult> NotDeleted<TResult>(this IQueryable<TResult> query) where TResult : EntityBase
+        {
+            return query.Where(item => item.IsDeleted == false);
         }
     }
 }
