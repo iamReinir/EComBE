@@ -19,6 +19,8 @@ gửi POST tới đó với enctype=multipart/form-data là nó trả về cái 
 
 >  http://reinir.mooo.com:5002/uploaded_image_1729160653.jpg
 
+### Lấy icon từ chỗ này : https://www.flaticon.com/packs/ecommerce-131
+
 ## Ai cần connect tới database / server die thì chat riêng với Trung
 
 ## Làm ơn không push login/password của db lên github
