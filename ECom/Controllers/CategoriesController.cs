@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ECom;
 using EComBusiness.Entity;
+using EComBusiness.HelperModel;
 
 namespace ECom.Controllers
 {
@@ -25,7 +26,7 @@ namespace ECom.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Category>>> GetCategories()
         {
-            return await _context.Categories.ToListAsync();
+            return await _context.Categories.NotDeleted().ToListAsync();
         }
 
         // GET: api/Categories/5
