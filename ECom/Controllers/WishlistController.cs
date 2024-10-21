@@ -27,7 +27,10 @@ namespace ECom.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<WishlistItem>>> GetWishLists()
         {
-            return await _context.WishLists.ToListAsync();
+            return await _context.WishLists
+                .NotDeleted()
+                .Include(x => x.Product)
+                .ToListAsync();
         }
 
         // GET: api/Wishlist/5
