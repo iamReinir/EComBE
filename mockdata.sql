@@ -21,4 +21,33 @@ VALUES
     ('CAT001', '2024-08-05 14:00:00', 'Touchscreen convertible laptop', 'https://picsum.photos/200', 0, 'Convertible Laptop', 1199.99, 'PROD013', 18, '2024-10-08 14:00:00'),
     ('CAT004', '2024-07-30 10:45:00', '144Hz gaming monitor with G-Sync', 'https://picsum.photos/200', 0, '144Hz Gaming Monitor', 349.99, 'PROD014', 22, '2024-10-06 10:45:00'),
     ('CAT005', '2024-09-18 17:00:00', 'Wireless earbuds with active noise canceling', 'https://picsum.photos/200', 0, 'Noise-Canceling Earbuds', 99.99, 'PROD015', 150, '2024-10-12 17:00:00');
+	
+	
+INSERT INTO Categories (CategoryId, CreatedAt, Description, IsDeleted, Name, ParentCategoryId, UpdatedAt,ImageUrl)
+VALUES
+    ('CAT006', '2024-08-01 09:00:00', 'Desktop Personal Computer', 0, 'Computers', NULL, '2024-10-21 09:00:00','http://reinir.mooo.com:5002/uploaded_image_1729478179.png'),
+    ('CAT007', '2024-07-15 11:00:00', 'Gaming devices like playstations, psps, switch', 0, 'GamingDevices', NULL, '2024-10-21 11:00:00','http://reinir.mooo.com:5002/uploaded_image_1729478180.png'),
+    ('CAT008', '2024-07-20 12:30:00', 'Smartphones devices', 0, 'Smartphones', null, '2024-10-21 12:30:00','http://reinir.mooo.com:5002/uploaded_image_1729478183.png'),
+    ('CAT009', '2024-08-10 10:45:00', 'Tablets', 0, 'Tablets', NULL, '2024-10-21 10:45:00','http://reinir.mooo.com:5002/uploaded_image_1729478184.png'),    
 
+UPDATE Categories SET ImageUrl ='http://reinir.mooo.com:5002/uploaded_image_1729478182.png'
+WHERE CategoryId = 'CAT001';
+
+UPDATE Categories SET ImageUrl ='http://reinir.mooo.com:5002/uploaded_image_1729478974.png'
+WHERE CategoryId = 'CAT002';
+
+UPDATE Categories SET IsDeleted='1' WHERE CategoryId = 'CAT003';
+
+UPDATE Categories SET ImageUrl ='http://reinir.mooo.com:5002/uploaded_image_1729478185.png'
+WHERE CategoryId = 'CAT004';
+
+UPDATE Categories SET ImageUrl ='http://reinir.mooo.com:5002/uploaded_image_1729478181.png'
+WHERE CategoryId = 'CAT005';
+
+INSERT INTO WishLists (UserId,ProductId,IsDeleted,CreatedAt,UpdatedAt)
+VALUES 
+	('efa70cbd-daea-48b6-a8d6-aeaf46cb5273','PROD007','0',NOW(),NOW()),
+	('efa70cbd-daea-48b6-a8d6-aeaf46cb5273','PROD008','0',NOW(),NOW()),
+	('efa70cbd-daea-48b6-a8d6-aeaf46cb5273','PROD009','0',NOW(),NOW()),
+	('efa70cbd-daea-48b6-a8d6-aeaf46cb5273','PROD010','0',NOW(),NOW()),
+	('efa70cbd-daea-48b6-a8d6-aeaf46cb5273','PROD011','0',NOW(),NOW());
