@@ -9,6 +9,15 @@
 
     public static class EntityExtension
     {
+
+        public static TResult CreateAudit<TResult>(this TResult entity) where TResult : EntityBase
+        {
+            entity.IsDeleted = false;
+            entity.CreatedAt = DateTime.Now;
+            entity.UpdatedAt = DateTime.Now;
+            return entity;
+        }
+
         public static TResult UpdateAudit<TResult>(this TResult entity) where TResult : EntityBase
         {
             entity.UpdatedAt = DateTime.Now;
