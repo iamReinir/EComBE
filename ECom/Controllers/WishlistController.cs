@@ -23,77 +23,57 @@ namespace ECom.Controllers
             _context = context;
         }
 
-        // GET: api/Wishlist
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<WishlistItem>>> GetWishLists()
+        public async Task<ActionResult<IEnumerable<WishlistDTO>>> GetWishlistItem([FromQuery] List<string> userId)
         {
             return await _context.WishLists
+                .AsNoTracking()
                 .NotDeleted()
+                .Where(x => !userId.Any() || userId.Contains(x.UserId))
                 .Include(x => x.Product)
+                .Select(x => new WishlistDTO
+                {
+                    Product = x.Product,
+                    ProductId = x.ProductId,
+                    UserId = x.UserId
+                })
                 .ToListAsync();
         }
 
-        // GET: api/Wishlist/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<IEnumerable<WishlistItem>>> GetWishlistItem(string id)
+        [HttpGet("{userId}")]
+        public async Task<ActionResult<IEnumerable<WishlistDTO>>> GetWishlistItem(string userId)
         {
-            var user = await _context.AppUsers
-                .Include(x => x.WishList).AsNoTracking().NotDeleted()
-                .FirstOrDefaultAsync(user => user.UserId.Equals(id));
-
-            if (user == null)
-            {
-                return NotFound();
-            }
-
-            return user.WishList.ToList();
+            return await _context.WishLists
+                .AsNoTracking()
+                .NotDeleted()
+                .Where(x => x.UserId.Equals(userId))
+                .Include(x => x.Product)
+                .Select(x => new WishlistDTO
+                {
+                    Product = x.Product,
+                    ProductId = x.ProductId,
+                    UserId = x.UserId
+                })
+                .ToListAsync();
         }
 
-        // PUT: api/Wishlist/5
-        /*
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutWishlistItem(string id, WishlistItem wishlistItem)
-        {
-            if (id != wishlistItem.UserId)
-            {
-                return BadRequest();
-            }
+        //POST: api/Wishlist
 
-            _context.Entry(wishlistItem).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!WishlistItemExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return NoContent();
-        }
-        */
-
-        // POST: api/Wishlist
-        /*
         [HttpPost]
-        public async Task<ActionResult<WishlistItem>> PostWishlistItem(WishlistItem wishlistItem)
+        public async Task<ActionResult<WishlistItem>> PostWishlistItem(WishlistAddRequest request)
         {
-            _context.WishLists.Add(wishlistItem);
+            _context.WishLists.Add(new WishlistItem
+            {
+                ProductId = request.ProductId,
+                UserId = request.UserId
+            }.CreateAudit());
             try
             {
                 await _context.SaveChangesAsync();
             }
             catch (DbUpdateException)
             {
-                if (WishlistItemExists(wishlistItem.UserId))
+                if (WishlistItemExists(request.UserId, request.ProductId))
                 {
                     return Conflict();
                 }
@@ -103,29 +83,29 @@ namespace ECom.Controllers
                 }
             }
 
-            return CreatedAtAction("GetWishlistItem", new { id = wishlistItem.UserId }, wishlistItem);
+            return CreatedAtAction("GetWishlistItem", request);
         }
-        */
 
-        // DELETE: api/Wishlist/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteWishlistItem(string id)
+        [HttpDelete("{id}/{productId}")]
+        public async Task<IActionResult> DeleteWishlistItem(string id, string productId)
         {
-            var wishlistItem = await _context.WishLists.FindAsync(id);
+            var wishlistItem = await _context.WishLists
+                .NotDeleted()
+                .Where(x => x.UserId.Equals(id))
+                .FirstOrDefaultAsync(x => x.ProductId.Equals(productId));
             if (wishlistItem == null)
             {
                 return NotFound();
             }
-
-            _context.WishLists.Remove(wishlistItem);
+            wishlistItem.SoftDelete();
             await _context.SaveChangesAsync();
 
             return NoContent();
         }
 
-        private bool WishlistItemExists(string id)
+        private bool WishlistItemExists(string userid, string productid)
         {
-            return _context.WishLists.Any(e => e.UserId == id);
+            return _context.WishLists.Any(e => e.UserId.Equals(userid) && e.ProductId.Equals(productid));
         }
     }
 }
