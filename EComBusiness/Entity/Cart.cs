@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 namespace EComBusiness.Entity
 {
@@ -15,6 +16,7 @@ namespace EComBusiness.Entity
         // Navigation
         public virtual ICollection<CartItem> Items { get; set; } = new List<CartItem>();
         [ForeignKey(nameof(UserId))]
+        [JsonIgnore]
         public virtual User AppUser { get; set; }
     }
 }

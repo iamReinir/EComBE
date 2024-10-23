@@ -7,11 +7,15 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ECom;
 using EComBusiness.Entity;
+using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
+using ECom.ViewModels.CartItem;
 
 namespace ECom.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    //  [Authorize]
     public class CartsController : ControllerBase
     {
         private readonly EComContext _context;
@@ -118,5 +122,124 @@ namespace ECom.Controllers
         {
             return _context.Carts.Any(e => e.CartId == id);
         }
+
+        [HttpPost("AddCartItem")]
+        [Authorize]
+        public async Task<ActionResult<CartItem>> AddCartItem([FromBody] CartItemModel model)
+        {
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrEmpty(userId))
+            {
+                return Unauthorized(new { Message = "User is not authenticated" });
+            }
+
+            var cart = await _context.Carts
+                .Include(c => c.Items)
+                .FirstOrDefaultAsync(c => c.UserId == userId);
+
+            if (cart == null)
+            {
+                cart = new Cart
+                {
+                    CartId = Guid.NewGuid().ToString(),
+                    UserId = userId,
+                    TotalAmount = 0,
+                    Items = new List<CartItem>()
+                };
+
+                _context.Carts.Add(cart);
+                await _context.SaveChangesAsync();
+            }
+
+            var existingCartItem = cart.Items.FirstOrDefault(ci => ci.ProductId == model.ProductId);
+
+            if (existingCartItem != null)
+            {
+                existingCartItem.Quantity += model.Quantity;
+                cart.TotalAmount += model.PriceAtAddition * model.Quantity;
+
+                existingCartItem.PriceAtAddition = model.PriceAtAddition;
+            }
+            else
+            {
+                var newCartItem = new CartItem
+                {
+                    ProductId = model.ProductId,
+                    CartId = cart.CartId,
+                    Quantity = model.Quantity,
+                    PriceAtAddition = model.PriceAtAddition
+                };
+
+                cart.Items.Add(newCartItem);
+                cart.TotalAmount += newCartItem.PriceAtAddition * newCartItem.Quantity;
+            }
+            await _context.SaveChangesAsync();
+
+            return Ok(cart.Items);
+        }
+
+
+
+        [HttpGet("GetCartItems")]
+        [Authorize]
+        public async Task<ActionResult<IEnumerable<object>>> GetCartItems()
+        {
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrEmpty(userId))
+            {
+                return Unauthorized(new { Message = "User is not authenticated" });
+            }
+
+            var cartItems = await _context.CartItems
+                .Include(ci => ci.Product)
+                .Where(ci => ci.Cart.UserId == userId)
+                .ToListAsync();
+
+            if (cartItems == null || !cartItems.Any())
+            {
+                return NotFound(new { Message = "No items found in the cart." });
+            }
+
+            var result = cartItems.Select(cartItem => new
+            {
+                cartItem.CartId,
+                cartItem.Quantity,
+                Product = new
+                {
+                    cartItem.Product.ProductId,
+                    cartItem.Product.Name,
+                    cartItem.Product.ImageUrl,
+                    cartItem.Product.Price,
+                    cartItem.Product.Description,
+                    cartItem.Product.QuantityAvailable
+                }
+            }).ToList();
+
+            return Ok(result);
+        }
+
+        [HttpDelete("DeleteCartItem/{productId}")]
+        [Authorize]
+        public async Task<ActionResult> DeleteCartItem(string productId)
+        {
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrEmpty(userId))
+            {
+                return Unauthorized(new { Message = "User is not authenticated" });
+            }
+            var cartItem = await _context.CartItems
+                .FirstOrDefaultAsync(ci => ci.ProductId == productId && ci.Cart.UserId == userId);
+
+            if (cartItem == null)
+            {
+                return NotFound(new { Message = "Cart item not found." });
+            }
+
+            _context.CartItems.Remove(cartItem);
+            await _context.SaveChangesAsync();
+
+            return NoContent();
+        }
+
     }
 }
