@@ -27,6 +27,14 @@
         public static TResult SoftDelete<TResult>(this TResult entity) where TResult : EntityBase
         {
             entity.IsDeleted = true;
+            entity.UpdatedAt = DateTime.Now;
+            return entity;
+        }
+
+        public static TResult Undelete<TResult>(this TResult entity) where TResult : EntityBase
+        {
+            entity.IsDeleted = false;
+            entity.UpdatedAt = DateTime.Now;
             return entity;
         }
 

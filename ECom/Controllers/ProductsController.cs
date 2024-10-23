@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ECom;
 using EComBusiness.Entity;
+using EComBusiness.HelperModel;
+using ECom.Migrations;
 
 namespace ECom.Controllers
 {
@@ -23,9 +25,61 @@ namespace ECom.Controllers
 
         // GET: api/Products
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Product>>> GetProducts()
+        public async Task<ActionResult<IEnumerable<ProductDTO>>> GetProducts([FromQuery] string? userId)
         {
-            return await _context.Products.ToListAsync();
+            var products = await _context.Products
+                .NotDeleted()
+                .Include(p => p.Category)
+                .ToListAsync();
+            IEnumerable<string> wishedListed = new List<string>();
+            IEnumerable<string> rated = new List<string>();
+            if (string.IsNullOrEmpty(userId) == false)
+            {
+                wishedListed = await (from product in _context.Products.NotDeleted()
+                                       join wishlist in _context.WishLists.NotDeleted()
+                                       on product.ProductId equals wishlist.ProductId
+                                       where wishlist.UserId == userId
+                                       select product.ProductId).ToListAsync();
+                rated = await (from product in _context.Products.NotDeleted()
+                               join wishlist in _context.Ratings.NotDeleted()
+                               on product.ProductId equals wishlist.ProductId
+                               where wishlist.UserId == userId
+                               select product.ProductId).ToListAsync();
+            }
+            var result =  (from product in products
+                    join productid in wishedListed
+                    on product.ProductId equals productid into productids
+                    from productid in productids.DefaultIfEmpty()
+                    select new ProductDTO
+                    {
+                        ProductId = product.ProductId,
+                        Description = product.Description,
+                        Name = product.Name,
+                        ImageUrl = product.ImageUrl,
+                        Price = product.Price,
+                        QuantityAvailable = product.QuantityAvailable,
+                        Rating = product.Rating,
+                        RatingCount = product.RatingCount,
+                        IsWishlisted = !string.IsNullOrEmpty(productid),
+                        Category = new CategoryDTO
+                        {
+                            CategoryId = product.Category?.CategoryId,
+                            Description = product.Category?.Description,
+                            ImageUrl = product.Category?.ImageUrl,
+                            Name = product.Category?.Name
+                        }
+                    });
+            result = (from product in result
+                      join productid in rated
+                      on product.ProductId equals productid into productids
+                      from productid in productids.DefaultIfEmpty()
+                      select new { product, isRated = !string.IsNullOrEmpty(productid) })
+                      .Select(p => 
+                      {
+                          p.product.IsRated = p.isRated;
+                          return p.product;
+                      });
+            return Ok(result ?? new List<ProductDTO>());
         }
 
         // GET: api/Products/5

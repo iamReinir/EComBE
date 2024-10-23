@@ -17,6 +17,8 @@ namespace EComBusiness.Entity
         public int QuantityAvailable { get; set; }        
         public string CategoryId { get; set; } = string.Empty;
         public string ImageUrl { get; set; } = string.Empty;
+        public decimal Rating { get; set; } = 0;
+        public int RatingCount { get; set;} = 0;
 
         // Navigation
         [ForeignKey(nameof(CategoryId))]

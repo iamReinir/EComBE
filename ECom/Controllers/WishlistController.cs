@@ -28,7 +28,6 @@ namespace ECom.Controllers
         {
             return await _context.WishLists
                 .AsNoTracking()
-                .NotDeleted()
                 .Where(x => !userId.Any() || userId.Contains(x.UserId))
                 .Include(x => x.Product)
                 .Select(x => new WishlistDTO
@@ -45,7 +44,6 @@ namespace ECom.Controllers
         {
             return await _context.WishLists
                 .AsNoTracking()
-                .NotDeleted()
                 .Where(x => x.UserId.Equals(userId))
                 .Include(x => x.Product)
                 .Select(x => new WishlistDTO
@@ -90,14 +88,13 @@ namespace ECom.Controllers
         public async Task<IActionResult> DeleteWishlistItem(string id, string productId)
         {
             var wishlistItem = await _context.WishLists
-                .NotDeleted()
                 .Where(x => x.UserId.Equals(id))
                 .FirstOrDefaultAsync(x => x.ProductId.Equals(productId));
             if (wishlistItem == null)
             {
                 return NotFound();
             }
-            wishlistItem.SoftDelete();
+            _context.Remove(wishlistItem);
             await _context.SaveChangesAsync();
 
             return NoContent();

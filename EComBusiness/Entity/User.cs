@@ -21,5 +21,6 @@ namespace EComBusiness.Entity
 
         // Navigation
         public virtual ICollection<WishlistItem> WishList { get; set; }
+        public virtual ICollection<RatingItem> RatingList { get; set; }
     }
 }
