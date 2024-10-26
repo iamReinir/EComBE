@@ -51,7 +51,7 @@ namespace EComBusiness.Controllers
             _context.AppUsers.Add(user);
             await _context.SaveChangesAsync();
 
-            return Ok(new { Message = "Registration successful." });
+            return Ok(user);
         }
 
 
@@ -65,7 +65,7 @@ namespace EComBusiness.Controllers
 
             var token = GenerateJwtToken(user);
 
-            return Ok(new { Token = token, Message = "Login successful!" });
+            return Ok(new { Token = token, User = user});
         }
 
 
