@@ -26,9 +26,11 @@ namespace ECom.Controllers
 
         // GET: api/Products
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<ProductDTO>>> GetProducts([FromQuery] string? userId)
+        public async Task<ActionResult<IEnumerable<ProductDTO>>> GetProducts(
+            [FromQuery] string? userId,
+            [FromQuery] IEnumerable<string>? categoryIds)
         {
-            var result = await ProductService.GetProducts(_context, userId);
+            var result = await ProductService.GetProducts(_context, userId, categoryIds);
             return Ok(result);
         }
 

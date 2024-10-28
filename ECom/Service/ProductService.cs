@@ -7,13 +7,19 @@ namespace ECom.Service
 {
     public static class ProductService
     {
-        public static async Task<IEnumerable<ProductDTO>> GetProducts(EComContext _context, string? userId)
+        public static async Task<IEnumerable<ProductDTO>> GetProducts(
+            EComContext _context, 
+            string? userId,
+            IEnumerable<string>? categoryIds = null)
         {
-            var products = await _context.Products
+            var productsQuery = _context.Products
                 .AsNoTracking()
-                .NotDeleted()
-                .Include(p => p.Category)
-                .ToListAsync();
+                .NotDeleted();
+            if(categoryIds != null && categoryIds.Any())
+            {
+                productsQuery = productsQuery.Where(p => categoryIds.Contains(p.CategoryId));
+            }
+            var products = await productsQuery.Include(x => x.Category).ToListAsync();
             IEnumerable<string> wishedListed = new List<string>();
             IEnumerable<string> rated = new List<string>();
             if (string.IsNullOrEmpty(userId) == false)
