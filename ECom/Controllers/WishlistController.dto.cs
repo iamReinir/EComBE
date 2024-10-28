@@ -7,7 +7,7 @@ namespace ECom.Controllers
     {
         public string UserId { get; set; } = string.Empty;
         public string ProductId { get; set; } = string.Empty;
-        public Product Product { get; set; }
+        public ProductDTO Product { get; set; }
     }
 
     public class WishlistAddRequest

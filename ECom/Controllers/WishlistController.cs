@@ -9,6 +9,7 @@ using ECom;
 using EComBusiness.Entity;
 using Microsoft.AspNetCore.Authorization;
 using EComBusiness.HelperModel;
+using ECom.Service;
 
 namespace ECom.Controllers
 {
@@ -26,33 +27,36 @@ namespace ECom.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<WishlistDTO>>> GetWishlistItem([FromQuery] List<string> userId)
         {
-            return await _context.WishLists
-                .AsNoTracking()
-                .Where(x => !userId.Any() || userId.Contains(x.UserId))
-                .Include(x => x.Product)
-                .Select(x => new WishlistDTO
-                {
-                    Product = x.Product,
-                    ProductId = x.ProductId,
-                    UserId = x.UserId
-                })
+            var products = await ProductService.GetProducts(_context, userId);
+            var wishItems = await _context.WishLists.AsNoTracking().NotDeleted()
+                .Where(x => userId.Contains(x.UserId))
                 .ToListAsync();
+            return Ok(from product in products
+                      join wishitem in wishItems
+                      on product.ProductId equals wishitem.ProductId
+                      select new WishlistDTO
+                      {
+                          Product = product,
+                          ProductId = product.ProductId,
+                          UserId = wishitem.UserId
+                      });
         }
-
         [HttpGet("{userId}")]
         public async Task<ActionResult<IEnumerable<WishlistDTO>>> GetWishlistItem(string userId)
         {
-            return await _context.WishLists
-                .AsNoTracking()
-                .Where(x => x.UserId.Equals(userId))
-                .Include(x => x.Product)
-                .Select(x => new WishlistDTO
-                {
-                    Product = x.Product,
-                    ProductId = x.ProductId,
-                    UserId = x.UserId
-                })
+            var products = await ProductService.GetProducts(_context, userId);
+            var wishItems = await _context.WishLists.AsNoTracking().NotDeleted()
+                .Where(x => x.UserId == userId)
                 .ToListAsync();
+            return Ok(from product in products
+                      join wishitem in wishItems 
+                      on product.ProductId equals wishitem.ProductId
+                      select new WishlistDTO
+                      {
+                          Product = product,
+                          ProductId = product.ProductId,
+                          UserId = wishitem.UserId
+                      });
         }
 
         //POST: api/Wishlist
