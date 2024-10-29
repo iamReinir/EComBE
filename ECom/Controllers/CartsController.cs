@@ -123,14 +123,13 @@ namespace ECom.Controllers
             return _context.Carts.Any(e => e.CartId == id);
         }
 
+
         [HttpPost("AddCartItem")]
-        [Authorize]
-        public async Task<ActionResult<CartItem>> AddCartItem([FromBody] CartItemModel model)
+        public async Task<ActionResult<CartItem>> AddCartItem([FromQuery] string userId, [FromBody] CartItemModel model)
         {
-            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             if (string.IsNullOrEmpty(userId))
             {
-                return Unauthorized(new { Message = "User is not authenticated" });
+                return BadRequest(new { Message = "User ID is required" });
             }
 
             var cart = await _context.Carts
@@ -157,7 +156,6 @@ namespace ECom.Controllers
             {
                 existingCartItem.Quantity += model.Quantity;
                 cart.TotalAmount += model.PriceAtAddition * model.Quantity;
-
                 existingCartItem.PriceAtAddition = model.PriceAtAddition;
             }
             else
@@ -178,16 +176,12 @@ namespace ECom.Controllers
             return Ok(cart.Items);
         }
 
-
-
         [HttpGet("GetCartItems")]
-        [Authorize]
-        public async Task<ActionResult<IEnumerable<object>>> GetCartItems()
+        public async Task<ActionResult<IEnumerable<object>>> GetCartItems([FromQuery] string userId)
         {
-            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             if (string.IsNullOrEmpty(userId))
             {
-                return Unauthorized(new { Message = "User is not authenticated" });
+                return BadRequest(new { Message = "User ID is required" });
             }
 
             var cartItems = await _context.CartItems
@@ -219,14 +213,13 @@ namespace ECom.Controllers
         }
 
         [HttpDelete("DeleteCartItem/{productId}")]
-        [Authorize]
-        public async Task<ActionResult> DeleteCartItem(string productId)
+        public async Task<ActionResult> DeleteCartItem([FromQuery] string userId, string productId)
         {
-            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             if (string.IsNullOrEmpty(userId))
             {
-                return Unauthorized(new { Message = "User is not authenticated" });
+                return BadRequest(new { Message = "User ID is required" });
             }
+
             var cartItem = await _context.CartItems
                 .FirstOrDefaultAsync(ci => ci.ProductId == productId && ci.Cart.UserId == userId);
 
@@ -240,6 +233,5 @@ namespace ECom.Controllers
 
             return NoContent();
         }
-
     }
 }
