@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ECom;
 using EComBusiness.Entity;
+using System.Security.Claims;
 
 namespace ECom.Controllers
 {
@@ -114,7 +115,39 @@ namespace ECom.Controllers
             return NoContent();
         }
 
-        private bool OrderExists(string id)
+
+        [HttpGet("GetOrders")]
+        public async Task<ActionResult<IEnumerable<object>>> GetOrders([FromQuery] string userId)
+        {
+            if (string.IsNullOrEmpty(userId))
+            {
+                return BadRequest(new { Message = "User ID is required" });
+            }
+
+            var orders = await _context.Set<Order>()
+                .Where(o => o.UserId == userId)
+                .Select(o => new
+                {
+                    o.OrderId,
+                    o.TotalAmount,
+                    o.Status,
+                    o.ShippingAddress,
+                    o.PaymentMethod
+                })
+                .ToListAsync();
+
+            if (!orders.Any())
+            {
+                return NotFound(new { Message = "No orders found" });
+            }
+
+            return Ok(orders);
+        }
+    
+
+
+
+private bool OrderExists(string id)
         {
             return _context.Orders.Any(e => e.OrderId == id);
         }
