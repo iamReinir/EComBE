@@ -1,4 +1,5 @@
 ﻿using ECom.Controllers;
+using EComBusiness.Entity;
 using EComBusiness.HelperModel;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -128,6 +129,38 @@ namespace ECom.Service
                           return p.product;
                       });
             return result ?? new List<ProductDTO>();
+        }
+
+        static public async Task CreateProduct(ProductAddDTO product, EComContext context)
+        {
+            if (string.IsNullOrEmpty(product.ProductId))
+            {
+                product.ProductId = Guid.NewGuid().ToString();
+            }
+            context.Products.Add(
+                new Product
+                {
+                    ProductId = product.ProductId,
+                    CategoryId = product.CategoryId,
+                    Description = product.Description,
+                    ImageUrl = product.ImageUrl,
+                    Name = product.Name,
+                    Price = product.Price,
+                    QuantityAvailable = product.QuantityAvailable
+                }.CreateAudit());
+            await context.SaveChangesAsync();
+        }
+
+        static public async Task<bool> DeleteProduct(string productId, EComContext context)
+        {
+            var product = await context.Products.FindAsync(productId);
+            if (product == null)
+            {
+                return false; // not found
+            }
+            context.Products.Remove(product);
+            await context.SaveChangesAsync();
+            return true;
         }
 
     }

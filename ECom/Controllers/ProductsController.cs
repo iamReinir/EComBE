@@ -82,12 +82,11 @@ namespace ECom.Controllers
         // POST: api/Products
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Product>> PostProduct(Product product)
+        public async Task<ActionResult<Product>> PostProduct(ProductAddDTO product)
         {
-            _context.Products.Add(product);
             try
             {
-                await _context.SaveChangesAsync();
+                await ProductService.CreateProduct(product, _context);
             }
             catch (DbUpdateException)
             {
@@ -108,15 +107,11 @@ namespace ECom.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteProduct(string id)
         {
-            var product = await _context.Products.FindAsync(id);
-            if (product == null)
+            var foundAndDelete = await ProductService.DeleteProduct(id, _context);
+            if (foundAndDelete == false)
             {
                 return NotFound();
             }
-
-            _context.Products.Remove(product);
-            await _context.SaveChangesAsync();
-
             return NoContent();
         }
 
