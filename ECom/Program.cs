@@ -1,7 +1,9 @@
 using ECom;
+using ECom.Service;
 using EComBusiness.HelperModel;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.OData;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
@@ -17,6 +19,11 @@ builder.Services.AddControllers()
     {
         options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
     }); ;
+ builder.Services.AddControllers().AddOData(opt =>
+    opt.Select().Expand().Filter().OrderBy().Count().SetMaxTop(100)
+            .AddRouteComponents("odata", EdmModel.getModel()));
+
+
 builder.Services.AddSwaggerGen(opt =>
 {
     opt.SwaggerDoc("v1", new OpenApiInfo { Title = "ECOM", Version = "v1" });
@@ -102,7 +109,7 @@ app.UseSwagger();
 app.UseSwaggerUI(c =>
 {
     c.SwaggerEndpoint("/swagger/v1/swagger.json", "ECom API V1");
-    c.RoutePrefix = string.Empty;  // Set Swagger UI at app's root
+    c.RoutePrefix = string.Empty; 
 });
 
 app.Run();
