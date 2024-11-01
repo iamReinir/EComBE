@@ -1,0 +1,36 @@
+syntax = "proto3";
+
+option csharp_namespace = "ECom.Proto";
+
+package auth_grpc;
+
+service Auth {  
+  rpc Login (LoginRequest) returns (LoginResponse);
+  rpc Register (RegisterRequest) returns (RegisterResponse);
+}
+
+message LoginRequest {
+	string email = 1;
+	string password = 2;
+}
+
+message LoginResponse {
+	bool isOk = 1;
+	string msg = 2;
+	string token = 3;
+}
+
+
+message RegisterRequest {
+	string email = 1;
+	string password = 2;
+	string name = 3;
+	string address = 4;
+	string PhoneNumber = 5;
+}
+
+message RegisterResponse {
+	bool isOk = 1;
+	string msg = 2;
+}
+
