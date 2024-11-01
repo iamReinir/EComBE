@@ -9,10 +9,13 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
 using System.Text.Json.Serialization;
+using Grpc.Core;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+
+builder.Services.AddGrpc();
 
 builder.Services.AddControllers()
     .AddJsonOptions(options =>
