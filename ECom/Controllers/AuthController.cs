@@ -63,36 +63,13 @@ namespace EComBusiness.Controllers
             if (user == null || !PasswordHelper.VerifyPassword(model.Password, user.PasswordHash))
                 return Unauthorized(new { Message = "Invalid credentials." });
 
-            var token = GenerateJwtToken(user);
+            var token = PasswordHelper.GenerateJwtToken(user, _configuration["JWT:Key"]);
 
             return Ok(new { Token = token, User = user});
         }
 
 
-        private string GenerateJwtToken(User user)
-        {
-            var claims = new[]
-            {
-                new Claim(ClaimTypes.NameIdentifier, user.UserId),
-                new Claim(ClaimTypes.Email, user.Email),
-                new Claim(ClaimTypes.Name, user.Name),
-                new Claim(ClaimTypes.Role, user.Role.ToString())
-            };
-            //    var key = new RsaSecurityKey(KeyHelper.GetPrivateKey());
-            //    var creds = new SigningCredentials(key, SecurityAlgorithms.RsaSha256);
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JWT:Key"]));
-            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-
-            var token = new JwtSecurityToken(
-                issuer: "Trang",
-                audience: "Jade",
-                claims: claims,
-                expires: DateTime.Now.AddDays(30),
-                signingCredentials: creds
-            );
-
-            return new JwtSecurityTokenHandler().WriteToken(token);
-        }
+       
 
     }
 }

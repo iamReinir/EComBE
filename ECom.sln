@@ -5,7 +5,9 @@ VisualStudioVersion = 17.9.34902.65
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ECom", "ECom\ECom.csproj", "{3E252BDE-0D39-4EC9-A26F-85E2A4A05FC0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EComBusiness", "EComBusiness\EComBusiness.csproj", "{AD065FDA-0BD3-46D9-87C9-3A34AE2892AE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EComBusiness", "EComBusiness\EComBusiness.csproj", "{AD065FDA-0BD3-46D9-87C9-3A34AE2892AE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EComAdmin", "EComAdmin\EComAdmin.csproj", "{41E332CE-380F-4FD4-A661-4274B2623410}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,10 @@ Global
 		{AD065FDA-0BD3-46D9-87C9-3A34AE2892AE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AD065FDA-0BD3-46D9-87C9-3A34AE2892AE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AD065FDA-0BD3-46D9-87C9-3A34AE2892AE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{41E332CE-380F-4FD4-A661-4274B2623410}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{41E332CE-380F-4FD4-A661-4274B2623410}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{41E332CE-380F-4FD4-A661-4274B2623410}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{41E332CE-380F-4FD4-A661-4274B2623410}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

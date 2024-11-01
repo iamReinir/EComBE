@@ -9,10 +9,14 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
 using System.Text.Json.Serialization;
+using Grpc.Core;
+using ECom.gRPCService;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+
+builder.Services.AddGrpc();
 
 builder.Services.AddControllers()
     .AddJsonOptions(options =>
@@ -111,5 +115,5 @@ app.UseSwaggerUI(c =>
     c.SwaggerEndpoint("/swagger/v1/swagger.json", "ECom API V1");
     c.RoutePrefix = string.Empty; 
 });
-
+app.MapGrpcService<RPCAuthService>();
 app.Run();
