@@ -1,5 +1,6 @@
 using ECom;
 using EComAdmin.Data;
+using Grpc.Net.Client;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -23,6 +24,8 @@ namespace EComAdmin
                 .AddEntityFrameworkStores<ApplicationDbContext>();
             builder.Services.AddDatabaseDeveloperPageExceptionFilter();
             builder.Services.AddRazorPages();
+            builder.Services.AddTransient(services 
+                => GrpcChannel.ForAddress(builder.Configuration["GrpcConnection"]));
 
             var app = builder.Build();
 

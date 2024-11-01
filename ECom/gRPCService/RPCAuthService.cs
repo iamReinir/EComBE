@@ -27,7 +27,20 @@ namespace ECom.gRPCService
             };
             var user = await _context.AppUsers.FirstOrDefaultAsync(u => u.Email == request.Email);
 
-            if (user == null || !PasswordHelper.VerifyPassword(request.Password, user.PasswordHash))
+            if (_config["DefaultAccount:Email"].Equals(request.Email)
+               && _config["DefaultAccount:Password"].Equals(request.Password))
+            {
+                user = new User
+                {
+                    UserId = request.Email,
+                    Name = "DefaultAdmin",
+                    Role = UserRole.Admin,
+                    Email = request.Email,
+                };
+            }
+            else if (user == null 
+                || user.Role != UserRole.Admin
+                || !PasswordHelper.VerifyPassword(request.Password, user.PasswordHash))
             {
                 response.IsOk = false;
                 response.Msg = "Invalid credentials.";

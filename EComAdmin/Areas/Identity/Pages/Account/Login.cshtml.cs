@@ -23,11 +23,16 @@ namespace EComAdmin.Areas.Identity.Pages.Account
     {
         private readonly SignInManager<IdentityUser> _signInManager;
         private readonly ILogger<LoginModel> _logger;
+        private readonly GrpcChannel _channel;
 
-        public LoginModel(SignInManager<IdentityUser> signInManager, ILogger<LoginModel> logger)
+        public LoginModel(
+            SignInManager<IdentityUser> signInManager,
+            ILogger<LoginModel> logger,
+            GrpcChannel channel)
         {
             _signInManager = signInManager;
             _logger = logger;
+            _channel = channel;
         }
 
         /// <summary>
@@ -111,8 +116,7 @@ namespace EComAdmin.Areas.Identity.Pages.Account
 
             if (ModelState.IsValid)
             {
-                var channel = GrpcChannel.ForAddress("https://localhost:7247");
-                var client = new Auth.AuthClient(channel);
+                var client = new Auth.AuthClient(_channel);
                 var reply = await client.LoginAsync(new LoginRequest
                 {
                     Email = Input.Email,
