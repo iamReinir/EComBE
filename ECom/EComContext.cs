@@ -9,6 +9,11 @@ namespace ECom
             : base(options)
         {
         }
+
+        public EComContext(DbContextOptions options) : base(options)
+        {
+        }
+
         public DbSet<Cart> Carts { get; set; }
         public DbSet<CartItem> CartItems { get; set; }
         public DbSet<Category> Categories { get; set; }
