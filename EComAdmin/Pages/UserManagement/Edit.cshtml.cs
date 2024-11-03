@@ -8,39 +8,55 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using ECom;
 using EComBusiness.Entity;
+using EComBusiness.HelperModel;
+using ECom.Service;
+using Grpc.Net.Client;
+using System.Runtime.CompilerServices;
 
 namespace EComAdmin.Pages.UserManagement
 {
     public class EditModel : PageModel
     {
         private readonly ECom.EComContext _context;
+        private readonly GrpcChannel _channel;
 
-        public EditModel(ECom.EComContext context)
+        public EditModel(ECom.EComContext context, GrpcChannel channel)
         {
             _context = context;
+            _channel = channel;
         }
 
         [BindProperty]
         public User User { get; set; } = default!;
 
+        [BindProperty]
+        public string? NewPassword { get; set; }
+
         public async Task<IActionResult> OnGetAsync(string id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            var client = new Proto.UserManagement.UserManagementClient(_channel);
 
-            var user =  await _context.AppUsers.FirstOrDefaultAsync(m => m.UserId == id);
-            if (user == null)
+            var reply = await client.GetUserAsync(new Proto.GetUserRequest
+            {
+                Id = id
+            });
+
+            if (reply.IsOk == false)
             {
                 return NotFound();
             }
-            User = user;
+            User = new User
+            {
+                Address = reply.User.Address,
+                Email = reply.User.Email,
+                Name = reply.User.Name,
+                PhoneNumber = reply.User.Phonenumber,
+                Role = Role.Map(reply.User.Role),
+                UserId = reply.User.Id,
+                PasswordHash = reply.User.Password,
+            };
             return Page();
         }
-
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more information, see https://aka.ms/RazorPagesCRUD.
         public async Task<IActionResult> OnPostAsync()
         {
             if (!ModelState.IsValid)
@@ -48,25 +64,26 @@ namespace EComAdmin.Pages.UserManagement
                 return Page();
             }
 
-            _context.Attach(User).State = EntityState.Modified;
+            var client = new Proto.UserManagement.UserManagementClient(_channel);
 
-            try
+            if (!string.IsNullOrEmpty(NewPassword))
             {
-                await _context.SaveChangesAsync();
+                User.PasswordHash = NewPassword;
             }
-            catch (DbUpdateConcurrencyException)
+            var reply = await client.UpdateUserAsync(new Proto.UpdateUserRequest
             {
-                if (!UserExists(User.UserId))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
+                Id = User.UserId,
+                Address = User.Address,
+                Password = User.PasswordHash,
+                Email = User.Email,
+                Name= User.Name,
+                Phonenumber = User.PhoneNumber,
+                Role = Role.Map(User.Role),
+            });
 
-            return RedirectToPage("./Index");
+            if(reply.IsOk)
+                return RedirectToPage("./Index");
+            return Page();
         }
 
         private bool UserExists(string id)

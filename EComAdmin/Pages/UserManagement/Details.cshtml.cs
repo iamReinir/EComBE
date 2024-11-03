@@ -21,6 +21,8 @@ namespace EComAdmin.Pages.UserManagement
 
         public User User { get; set; } = default!;
 
+
+
         public async Task<IActionResult> OnGetAsync(string id)
         {
             if (id == null)

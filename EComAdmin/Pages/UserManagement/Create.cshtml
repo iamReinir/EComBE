@@ -15,55 +15,40 @@
         <form method="post">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
-                <label asp-for="User.UserId" class="control-label"></label>
-                <input asp-for="User.UserId" class="form-control" />
-                <span asp-validation-for="User.UserId" class="text-danger"></span>
+                <label asp-for="user.Name" class="control-label"></label>
+                <input asp-for="user.Name" class="form-control" />
+                <span asp-validation-for="user.Name" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="User.Name" class="control-label"></label>
-                <input asp-for="User.Name" class="form-control" />
-                <span asp-validation-for="User.Name" class="text-danger"></span>
+                <label asp-for="user.Email" class="control-label"></label>
+                <input asp-for="user.Email" class="form-control" />
+                <span asp-validation-for="user.Email" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="User.Email" class="control-label"></label>
-                <input asp-for="User.Email" class="form-control" />
-                <span asp-validation-for="User.Email" class="text-danger"></span>
+                <label for="Password" class="control-label">Password</label>
+                <input asp-for="Password" class="form-control" type="password" />
+                <span asp-validation-for="Password" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="User.PasswordHash" class="control-label"></label>
-                <input asp-for="User.PasswordHash" class="form-control" />
-                <span asp-validation-for="User.PasswordHash" class="text-danger"></span>
+                <label for="Repeat_Password" class="control-label">Repeat Password</label>
+                <input asp-for="Repeat_Password" class="form-control" type="password" />
+                <span asp-validation-for="Repeat_Password" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="User.Address" class="control-label"></label>
-                <input asp-for="User.Address" class="form-control" />
-                <span asp-validation-for="User.Address" class="text-danger"></span>
+                <label asp-for="user.Address" class="control-label"></label>
+                <input asp-for="user.Address" class="form-control" />
+                <span asp-validation-for="user.Address" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="User.PhoneNumber" class="control-label"></label>
-                <input asp-for="User.PhoneNumber" class="form-control" />
-                <span asp-validation-for="User.PhoneNumber" class="text-danger"></span>
+                <label asp-for="user.PhoneNumber" class="control-label"></label>
+                <input asp-for="user.PhoneNumber" class="form-control" />
+                <span asp-validation-for="user.PhoneNumber" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="User.Role" class="control-label"></label>
-                <select asp-for="User.Role" class="form-control"
+                <label asp-for="user.Role" class="control-label"></label>
+                <select asp-for="user.Role" class="form-control"
                         asp-items="@Html.GetEnumSelectList<EComBusiness.HelperModel.UserRole>()"></select>
-                <span asp-validation-for="User.Role" class="text-danger"></span>
-            </div>
-            <div class="form-group form-check">
-                <label class="form-check-label">
-                    <input class="form-check-input" asp-for="User.IsDeleted" /> @Html.DisplayNameFor(model => model.User.IsDeleted)
-                </label>
-            </div>
-            <div class="form-group">
-                <label asp-for="User.CreatedAt" class="control-label"></label>
-                <input asp-for="User.CreatedAt" class="form-control" />
-                <span asp-validation-for="User.CreatedAt" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="User.UpdatedAt" class="control-label"></label>
-                <input asp-for="User.UpdatedAt" class="form-control" />
-                <span asp-validation-for="User.UpdatedAt" class="text-danger"></span>
+                <span asp-validation-for="user.Role" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <input type="submit" value="Create" class="btn btn-primary" />
