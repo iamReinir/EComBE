@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using ECom;
 using EComBusiness.Entity;
 using System.Security.Claims;
+using ECom.ViewModels.Order;
 
 namespace ECom.Controllers
 {
@@ -132,7 +133,7 @@ namespace ECom.Controllers
                     o.TotalAmount,
                     o.Status,
                     o.ShippingAddress,
-                    o.PaymentMethod
+                    PaymentMethod = o.PaymentMethod.ToString() 
                 })
                 .ToListAsync();
 
@@ -145,12 +146,11 @@ namespace ECom.Controllers
         }
 
         [HttpPost("checkout")]
-        public async Task<IActionResult> Checkout(string userId)
+        public async Task<IActionResult> Checkout(string userId, [FromBody] CheckoutRequest request)
         {
-            var user = await _context.Users.FindAsync(userId);
-            if (user == null)
+            if (string.IsNullOrEmpty(userId))
             {
-                return NotFound("User not found.");
+                return BadRequest(new { Message = "User ID is required" });
             }
             var cart = await _context.Carts
                                      .Include(c => c.Items)
@@ -161,12 +161,12 @@ namespace ECom.Controllers
             }
 
             var order = new Order
-            {
+            {   OrderId=Guid.NewGuid().ToString(),
                 UserId = userId,
                 TotalAmount = cart.TotalAmount,
-                ShippingAddress = cart.AppUser.Address,
+                ShippingAddress = request.Address,
                 Status = OrderStatus.Pending,
-                PaymentMethod = PaymentMethod.PayAtSite 
+                PaymentMethod = request.PaymentMethod
             };
 
             _context.Orders.Add(order);
