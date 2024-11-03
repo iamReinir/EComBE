@@ -1,0 +1,70 @@
+syntax = "proto3";
+
+package usermanagement_grpc;
+
+service UserManagement {
+  // Create user via Auth.Register
+  
+  // Read/Get a user by ID
+  rpc GetUser(GetUserRequest) returns (UserResponse);
+  
+  // Update an existing user
+  rpc UpdateUser(UpdateUserRequest) returns (UserResponse);
+  
+  // Delete a user by ID
+  rpc DeleteUser(DeleteUserRequest) returns (UserResponse);
+  
+  // List all users
+  rpc ListUsers(ListUsersRequest) returns (ListUsersResponse);
+}
+
+// Message for a User
+message User {
+  string id = 1;            // Unique identifier for the user
+  string email = 2;         // User's email
+  string password = 3;      // User's password (consider hashing it)
+  string name = 4;          // User's name
+  string address = 5;       // User's address
+  string phonenumber = 6;   // User's phone number
+  int32 role = 7;
+}
+
+// Request message for getting a user by ID
+message GetUserRequest {
+  string id = 1;
+}
+
+// Request message for updating a user
+message UpdateUserRequest {
+  string id = 1;
+  string email = 2;
+  string password = 3;
+  string name = 4;
+  string address = 5;
+  string phonenumber = 6;
+  int32 role = 7;
+}
+
+// Request message for deleting a user by ID
+message DeleteUserRequest {
+  string id = 1;
+}
+
+// Request message for listing users (add pagination if needed)
+message ListUsersRequest {
+  int32 page = 1;           // Optional page number for pagination
+  int32 page_size = 2;      // Optional page size for pagination
+}
+
+// Response message for a single user
+message UserResponse {
+  User user = 1;
+  bool isOk = 2;
+  string msg = 3;
+}
+
+// Response message containing a list of users
+message ListUsersResponse {
+  repeated User users = 1;  // List of users
+  int32 total_count = 2;    // Optional total count of users (for pagination)
+}

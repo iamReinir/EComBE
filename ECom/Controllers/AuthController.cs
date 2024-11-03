@@ -65,10 +65,28 @@ namespace EComBusiness.Controllers
 
             var token = PasswordHelper.GenerateJwtToken(user, _configuration["JWT:Key"]);
 
-            return Ok(new { Token = token, User = user});
+            return Ok(new { Token = token, User = user });
         }
 
+        [HttpPost("update")]
+        public async Task<IActionResult> Update([FromBody] RegisterModel model)
+        {
+            var user = await _context.AppUsers.FirstOrDefaultAsync(u => u.Email == model.Email);
+            if (user == null)
+            {
+                return NotFound();
+            }
+            var hashedPassword = PasswordHelper.HashPassword(model.Password);
 
+            user.Name = model.Name;
+            user.Email = model.Email;
+            user.PasswordHash = hashedPassword;
+            user.Address = model.Address;
+            user.PhoneNumber = model.PhoneNumber;
+            await _context.SaveChangesAsync();
+
+            return Ok(user);
+        }
        
 
     }
