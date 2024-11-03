@@ -117,6 +117,48 @@ namespace ECom.Controllers
         }
 
 
+        [HttpGet("GetInforOrders")]
+        public async Task<ActionResult<IEnumerable<object>>> GetInforOrders([FromQuery] string userId)
+        {
+            if (string.IsNullOrEmpty(userId))
+            {
+                return BadRequest(new { Message = "User ID is required" });
+            }
+
+            var orders = await _context.Set<Order>()
+                .Where(o => o.UserId == userId)
+                .Select(o => new
+                {
+                    o.OrderId,
+                    o.TotalAmount,
+                    o.Status,
+                    o.ShippingAddress,
+                    PaymentMethod = o.PaymentMethod.ToString(),
+                    Items = o.Items.Select(oi => new
+                    {
+                        oi.Quantity,
+                        oi.PriceAtPurchase,
+                        Product = new
+                        {
+                            oi.ProductId,
+                            oi.Product.Name,
+                            oi.Product.Description,
+                            oi.Product.Price,
+                            oi.Product.ImageUrl
+                        }
+                    }).ToList() 
+                })
+                .ToListAsync();
+
+            if (!orders.Any())
+            {
+                return NotFound(new { Message = "No orders found" });
+            }
+
+            return Ok(orders);
+        }
+
+
         [HttpGet("GetOrders")]
         public async Task<ActionResult<IEnumerable<object>>> GetOrders([FromQuery] string userId)
         {
@@ -144,6 +186,7 @@ namespace ECom.Controllers
 
             return Ok(orders);
         }
+
 
         [HttpPost("checkout")]
         public async Task<IActionResult> Checkout(string userId, [FromBody] CheckoutRequest request)
