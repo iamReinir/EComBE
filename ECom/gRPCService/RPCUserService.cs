@@ -20,7 +20,7 @@ namespace ECom.gRPCService
             _context = context;
             _config = config;
         }
-        public async Task<ListUsersResponse> Index(ListUsersRequest request, ServerCallContext context)
+        public override async Task<ListUsersResponse> ListUsers(ListUsersRequest request, ServerCallContext context)
         {
             int count = await _context.AppUsers
                 .NotDeleted()
@@ -47,7 +47,7 @@ namespace ECom.gRPCService
         }
 
         // RPCUserService/Details/5
-        public async Task<UserResponse> Details(GetUserRequest request, ServerCallContext context)
+        public override async Task<UserResponse> GetUser(GetUserRequest request, ServerCallContext context)
         {
             var cur = await _context.AppUsers
                 .NotDeleted()
@@ -73,7 +73,7 @@ namespace ECom.gRPCService
         }
 
         // GET: RPCUserService/Edit/5
-        public async Task<UserResponse> Update(UpdateUserRequest request, ServerCallContext context)
+        public override async Task<UserResponse> UpdateUser(UpdateUserRequest request, ServerCallContext context)
         {
             var user = await _context.AppUsers
                 .NotDeleted()
@@ -108,7 +108,7 @@ namespace ECom.gRPCService
             };
         }
 
-        public async Task<UserResponse> Delete(DeleteUserRequest request, ServerCallContext context)
+        public override async Task<UserResponse> DeleteUser(DeleteUserRequest request, ServerCallContext context)
         {
             var user = await _context.AppUsers
                 .FirstOrDefaultAsync(u => u.UserId == request.Id) ?? new EComBusiness.Entity.User();
