@@ -143,11 +143,60 @@ namespace ECom.Controllers
 
             return Ok(orders);
         }
-    
+
+        [HttpPost("checkout")]
+        public async Task<IActionResult> Checkout(string userId)
+        {
+            var user = await _context.Users.FindAsync(userId);
+            if (user == null)
+            {
+                return NotFound("User not found.");
+            }
+            var cart = await _context.Carts
+                                     .Include(c => c.Items)
+                                     .FirstOrDefaultAsync(c => c.UserId == userId);
+            if (cart == null || !cart.Items.Any())
+            {
+                return BadRequest("Cart is empty or does not exist.");
+            }
+
+            var order = new Order
+            {
+                UserId = userId,
+                TotalAmount = cart.TotalAmount,
+                ShippingAddress = cart.AppUser.Address,
+                Status = OrderStatus.Pending,
+                PaymentMethod = PaymentMethod.PayAtSite 
+            };
+
+            _context.Orders.Add(order);
+            await _context.SaveChangesAsync();
+
+            foreach (var cartItem in cart.Items)
+            {
+                var orderItem = new OrderItem
+                {
+                    ProductId = cartItem.ProductId,
+                    OrderId = order.OrderId,
+                    Quantity = cartItem.Quantity,
+                    PriceAtPurchase = cartItem.PriceAtAddition 
+                };
+
+                _context.OrderItems.Add(orderItem);
+            }
+
+            await _context.SaveChangesAsync();
+            _context.CartItems.RemoveRange(cart.Items);
+            cart.TotalAmount = 0;
+
+            await _context.SaveChangesAsync();
+
+            return Ok(new { message = "Order created successfully", orderId = order.OrderId });
+        }
 
 
 
-private bool OrderExists(string id)
+        private bool OrderExists(string id)
         {
             return _context.Orders.Any(e => e.OrderId == id);
         }
