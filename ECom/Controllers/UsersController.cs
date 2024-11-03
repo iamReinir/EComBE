@@ -7,11 +7,14 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ECom;
 using EComBusiness.Entity;
+using Microsoft.AspNetCore.Authorization;
+using EComBusiness.HelperModel;
 
 namespace ECom.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class UsersController : ControllerBase
     {
         private readonly EComContext _context;
@@ -23,6 +26,7 @@ namespace ECom.Controllers
 
         // GET: api/Users
         [HttpGet]
+        [Authorize(Roles = nameof(UserRole.Customer))]
         public async Task<ActionResult<IEnumerable<User>>> GetAppUsers()
         {
             return await _context.AppUsers.ToListAsync();
