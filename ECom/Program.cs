@@ -131,5 +131,5 @@ app.UseSwaggerUI(c =>
     c.RoutePrefix = string.Empty; 
 });
 app.MapGrpcService<RPCAuthService>();
-app.MapGrpcService<RPCUserService>()
+app.MapGrpcService<RPCUserService>();
 app.Run();
