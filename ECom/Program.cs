@@ -27,6 +27,21 @@ builder.Services.AddControllers()
     opt.Select().Expand().Filter().OrderBy().Count().SetMaxTop(100)
             .AddRouteComponents("odata", EdmModel.getModel()));
 
+// Configure Kestrel to listen on multiple endpoints
+builder.WebHost.ConfigureKestrel(options =>
+{
+    // HTTP endpoint (for REST API)
+    options.ListenAnyIP(5000, listenOptions =>
+    {
+        listenOptions.Protocols = Microsoft.AspNetCore.Server.Kestrel.Core.HttpProtocols.Http1;
+    });
+
+    // gRPC endpoint (requires HTTP/2)
+    options.ListenAnyIP(5003, listenOptions =>
+    {
+        listenOptions.Protocols = Microsoft.AspNetCore.Server.Kestrel.Core.HttpProtocols.Http2;
+    });
+});
 
 builder.Services.AddSwaggerGen(opt =>
 {
