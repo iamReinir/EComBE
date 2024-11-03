@@ -11,6 +11,8 @@ using System.Text;
 using System.Text.Json.Serialization;
 using Grpc.Core;
 using ECom.gRPCService;
+using ECom.Websocket;
+using Microsoft.AspNetCore.WebSockets;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -71,6 +73,11 @@ builder.Services.AddSwaggerGen(opt =>
     });
 });
 builder.Configuration.AddJsonFile("appsettings.json");
+builder.Services.AddSingleton<WebSocketService>();
+builder.Services.AddWebSockets(options =>
+{
+    options.KeepAliveInterval = TimeSpan.FromSeconds(120); // Optional: set a keep-alive interval
+});
 builder.Services.AddDbContext<EComContext>(options =>
     options.UseMySql(builder.Configuration.GetConnectionString("Default"),
      new MySqlServerVersion(new Version(8, 0, 39))));
@@ -132,4 +139,5 @@ app.UseSwaggerUI(c =>
 });
 app.MapGrpcService<RPCAuthService>();
 app.MapGrpcService<RPCUserService>();
+app.UseWebSockets();
 app.Run();
