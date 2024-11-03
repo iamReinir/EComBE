@@ -4,6 +4,7 @@
 
 using System;
 using System.Threading.Tasks;
+using EComAdmin.Data;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -16,16 +17,19 @@ namespace EComAdmin.Areas.Identity.Pages.Account
     {
         private readonly SignInManager<IdentityUser> _signInManager;
         private readonly ILogger<LogoutModel> _logger;
+        private readonly UserService _userService;
 
-        public LogoutModel(SignInManager<IdentityUser> signInManager, ILogger<LogoutModel> logger)
+        public LogoutModel(SignInManager<IdentityUser> signInManager, ILogger<LogoutModel> logger,
+            UserService service)
         {
             _signInManager = signInManager;
             _logger = logger;
+            _userService = service;
         }
 
         public async Task<IActionResult> OnPost(string returnUrl = null)
         {
-            await _signInManager.SignOutAsync();
+            _userService.Logout();
             _logger.LogInformation("User logged out.");
             if (returnUrl != null)
             {

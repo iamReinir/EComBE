@@ -50,7 +50,7 @@ namespace ECom.gRPCService
             var token = PasswordHelper.GenerateJwtToken(user, _config["JWT:Key"]);
             response.IsOk = true;
             response.Token = token;
-            response.Msg = "Login success.";
+            response.Msg = user.Name;
             return response;
         }
 

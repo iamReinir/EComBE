@@ -17,6 +17,9 @@ namespace EComAdmin
             builder.Services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseMySql(builder.Configuration.GetConnectionString("Default"),
                  new MySqlServerVersion(new Version(8, 0, 39))));
+            builder.Services.AddDbContext<EComContext>(options =>
+               options.UseMySql(builder.Configuration.GetConnectionString("Default"),
+                new MySqlServerVersion(new Version(8, 0, 39))));
 
             // builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true).AddEntityFrameworkStores<ApplicationDbContext>();
             builder.Services
@@ -24,6 +27,8 @@ namespace EComAdmin
                 .AddEntityFrameworkStores<ApplicationDbContext>();
             builder.Services.AddDatabaseDeveloperPageExceptionFilter();
             builder.Services.AddRazorPages();
+            builder.Services.AddSession();
+            builder.Services.AddTransient<UserService, UserService>();
             builder.Services.AddTransient(services 
                 => GrpcChannel.ForAddress(builder.Configuration["GrpcConnection"]));
 
@@ -46,6 +51,7 @@ namespace EComAdmin
 
             app.UseRouting();
 
+            app.UseSession();
             app.UseAuthorization();
 
             app.MapRazorPages();

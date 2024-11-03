@@ -2,20 +2,14 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 #nullable disable
 
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
+using EComAdmin.Data;
+using EComAdmin.Proto;
+using Grpc.Net.Client;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.Extensions.Logging;
-using Grpc.Net.Client;
-using EComAdmin.Proto;
+using System.ComponentModel.DataAnnotations;
 
 namespace EComAdmin.Areas.Identity.Pages.Account
 {
@@ -24,16 +18,20 @@ namespace EComAdmin.Areas.Identity.Pages.Account
         private readonly SignInManager<IdentityUser> _signInManager;
         private readonly ILogger<LoginModel> _logger;
         private readonly GrpcChannel _channel;
+        private readonly UserService _userService;
 
         public LoginModel(
             SignInManager<IdentityUser> signInManager,
             ILogger<LoginModel> logger,
-            GrpcChannel channel)
+            GrpcChannel channel,
+            UserService service)
         {
             _signInManager = signInManager;
             _logger = logger;
             _channel = channel;
+            _userService = service;
         }
+        
 
         /// <summary>
         ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
@@ -65,6 +63,7 @@ namespace EComAdmin.Areas.Identity.Pages.Account
         ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
         ///     directly from your code. This API may change or be removed in future releases.
         /// </summary>
+        /// 
         public class InputModel
         {
             /// <summary>
@@ -124,6 +123,7 @@ namespace EComAdmin.Areas.Identity.Pages.Account
                 });
                 if (reply.IsOk)
                 {
+                    _userService.SetUsername(reply.Msg);
                     _logger.LogInformation("User logged in.");
                     return LocalRedirect(returnUrl);
                 }

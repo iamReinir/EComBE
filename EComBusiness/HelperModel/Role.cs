@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -8,7 +9,9 @@ namespace EComBusiness.HelperModel
 {
     public enum UserRole
     {
+        [Display(Name = nameof(Admin))]
         Admin,
+        [Display(Name = nameof(Customer))]
         Customer
     }
     public static class Role

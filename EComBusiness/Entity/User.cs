@@ -20,7 +20,7 @@ namespace EComBusiness.Entity
         public UserRole Role { get; set; } = UserRole.Customer; // Enum for user role
 
         // Navigation
-        public virtual ICollection<WishlistItem> WishList { get; set; }
-        public virtual ICollection<RatingItem> RatingList { get; set; }
+        public virtual ICollection<WishlistItem>? WishList { get; set; }
+        public virtual ICollection<RatingItem>? RatingList { get; set; }
     }
 }
