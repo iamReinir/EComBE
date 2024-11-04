@@ -7,7 +7,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ECom", "ECom\ECom.csproj", 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EComBusiness", "EComBusiness\EComBusiness.csproj", "{AD065FDA-0BD3-46D9-87C9-3A34AE2892AE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EComAdmin", "EComAdmin\EComAdmin.csproj", "{41E332CE-380F-4FD4-A661-4274B2623410}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EComAdmin", "EComAdmin\EComAdmin.csproj", "{41E332CE-380F-4FD4-A661-4274B2623410}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

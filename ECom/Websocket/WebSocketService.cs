@@ -1,7 +1,6 @@
 ﻿using EComBusiness.Entity;
 using EComBusiness.HelperModel;
 using Microsoft.EntityFrameworkCore;
-using MySqlX.XDevAPI;
 using System.Collections.Concurrent;
 using System.Net.Sockets;
 using System.Net.WebSockets;
@@ -29,13 +28,21 @@ public class WebSocketService
             return false;
         var webSocket = await context.WebSockets.AcceptWebSocketAsync();
         if (!_clients.TryUpdate(userid, chatChannel.AdminEnter(webSocket), chatChannel))
+        {
+            Clean(userid);
             return false;
+        }
         await HandleAdmin(webSocket, userid);
         // Leave channel
         if (_clients.TryGetValue(userid, out chatChannel))
             if (_clients.TryUpdate(userid, chatChannel.AdminLeave(), chatChannel))
                 return true;
         return false;
+    }
+
+    public void Clean(string userid)
+    {
+        _clients.TryRemove(userid, out _);
     }
 
     private async Task HandleClient(WebSocket webSocket, string userid)
@@ -71,21 +78,27 @@ public class WebSocketService
                 var messageData = Encoding.UTF8.GetString(buffer, 0, result.Count);
                 if (!_clients.TryGetValue(userid, out var chatChannel))
                     continue;
-                await SendMessageViaSocket(messageData, chatChannel.Socket);
+                if(await SendMessageViaSocket(messageData, chatChannel.Socket) == false)
+                {
+                    Clean(userid); // send message fail. Remove the entry.
+                    return;
+                }
                 if (!_clients.TryUpdate(userid, chatChannel.AddMessage(messageData, true), chatChannel))
                     continue;
             }
         }
     }
 
-    private async Task SendMessageViaSocket(string message, WebSocket socket)
+    private async Task<bool> SendMessageViaSocket(string message, WebSocket socket)
     {
         var buffer = Encoding.UTF8.GetBytes($"{message}");
         var segment = new ArraySegment<byte>(buffer);
         if (socket.State == WebSocketState.Open)
         {
             await socket.SendAsync(segment, WebSocketMessageType.Text, true, CancellationToken.None);
+            return true;
         }
+        return false;
     }
     public async Task<IEnumerable<SimpleChannel>> AvailableChannels(EComContext context)
     {

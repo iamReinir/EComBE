@@ -21,6 +21,14 @@ namespace EComAdmin
                options.UseMySql(builder.Configuration.GetConnectionString("Default"),
                 new MySqlServerVersion(new Version(8, 0, 39))));
 
+            builder.Services.AddTransient(service =>
+            {
+                var client = new HttpClient();
+                client.BaseAddress = new Uri(builder.Configuration["BE_endpoint"]);
+                client.DefaultRequestHeaders.Add("Accept", "application/json");
+                return client;
+            });
+
             // builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true).AddEntityFrameworkStores<ApplicationDbContext>();
             builder.Services
                 .AddIdentity<IdentityUser, IdentityRole>()

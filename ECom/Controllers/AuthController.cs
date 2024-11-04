@@ -69,20 +69,22 @@ namespace EComBusiness.Controllers
         }
 
         [HttpPost("update")]
-        public async Task<IActionResult> Update([FromBody] RegisterModel model)
+        public async Task<IActionResult> Update([FromBody] UpdateModel model)
         {
             var user = await _context.AppUsers.FirstOrDefaultAsync(u => u.Email == model.Email);
             if (user == null)
             {
                 return NotFound();
             }
-            var hashedPassword = PasswordHelper.HashPassword(model.Password);
+            string hashedPassword = user.PasswordHash;
+            if(!string.IsNullOrEmpty(model.Password))
+                hashedPassword = PasswordHelper.HashPassword(model.Password);
 
-            user.Name = model.Name;
-            user.Email = model.Email;
+            user.Name = model.Name ?? user.Name;
+            user.Email = model.Email ?? user.Email;
             user.PasswordHash = hashedPassword;
-            user.Address = model.Address;
-            user.PhoneNumber = model.PhoneNumber;
+            user.Address = model.Address ?? user.Address;
+            user.PhoneNumber = model.PhoneNumber ?? user.PhoneNumber;
             await _context.SaveChangesAsync();
 
             return Ok(user);

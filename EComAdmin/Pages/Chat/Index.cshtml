@@ -1,0 +1,39 @@
+﻿@page
+@model EComAdmin.Pages.Chat.IndexModel
+
+@{
+    ViewData["Title"] = "Lobby";
+    Layout = "~/Pages/Shared/_Layout.cshtml";
+}
+
+<h1>User currently waiting for support</h1>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Channels.First().Userid)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Channels.First().Username)
+            </th>            
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.Channels)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Userid)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Username)
+                </td>
+                <td>
+                    <a asp-page="./Room" asp-route-id="@item.Userid">Enter room</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
